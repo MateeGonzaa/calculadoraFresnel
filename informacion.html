@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FresnelMG - herramienta profesional para el cálculo y análisis de la primera zona de Fresnel">
+  <title>FresnelMG | Información</title>
+  <link rel="stylesheet" href="style/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="topbar">
+    <a class="logo" href="index.html" aria-label="FresnelMG inicio">
+      <span class="logo-mark">◌</span>
+      <span>
+        <strong>Fresnel<span>MG</span></strong>
+        <small>RF LINK ANALYZER</small>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="Navegación principal">
+      <a class="" href="index.html">Calculadora</a>
+      <a class="" href="historial.html">Historial</a>
+      <a class="active" href="informacion.html">Información</a>
+    </nav>
+
+    <div class="status-pill"><i></i> Sistema listo</div>
+  </header>
+
+  <main>
+    <section class="hero hero-inner">
+      <div class="hero-copy">
+        <div class="kicker"><span></span>FresnelMG · Base teórica</div>
+        <h1>Información sobre<br><em>Zona de Fresnel</em></h1>
+        <p>Conocé las variables, la fórmula y el criterio utilizado por la herramienta para analizar un enlace inalámbrico.</p>
+        <div class="hero-meta">
+          <span>● Conceptos RF</span>
+          <span>● Fórmula</span>
+          <span>● Truncamiento</span>
+        </div>
+      </div>
+      <div class="hero-orbit" aria-hidden="true">
+        <div class="orbit orbit-a"></div>
+        <div class="orbit orbit-b"></div>
+        <div class="orbit orbit-c"></div>
+        <div class="signal-dot"></div>
+        <div class="tower tower-left"><b></b></div>
+        <div class="tower tower-right"><b></b></div>
+      </div>
+    </section>
+
+    <section class="section info-section" id="informacion">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">06 · Base teórica</span>
+          <h2>Información sobre enlaces inalámbricos</h2>
+          <p>Conceptos fundamentales para comprender la Zona de Fresnel, las frecuencias de operación y los factores que pueden afectar un enlace.</p>
+        </div>
+      </div>
+
+      <div class="info-grid info-grid-four">
+        <article class="info-card info-feature"><span class="info-icon">◉</span><h3>¿Qué es la Zona de Fresnel?</h3><p>Es una región elíptica imaginaria que rodea el trayecto de una señal entre dos antenas. No alcanza con tener línea de vista: los obstáculos dentro de esta región también pueden degradar el enlace.</p><strong>Concepto principal</strong></article>
+        <article class="info-card"><span class="info-icon">D</span><h3>Distancia entre antenas</h3><p>Representa la distancia total del enlace y se ingresa en kilómetros. A medida que aumenta la distancia, también aumenta el radio de la primera zona.</p><strong>D [km]</strong></article>
+        <article class="info-card"><span class="info-icon">f</span><h3>Frecuencia</h3><p>Es la frecuencia de operación del enlace y se expresa en GHz. La frecuencia influye directamente sobre el tamaño de la zona calculada.</p><strong>f [GHz]</strong></article>
+        <article class="info-card"><span class="info-icon">F₁</span><h3>Primera zona</h3><p>Es el radio de la primera zona de Fresnel en el punto de máxima amplitud, expresado en metros según la fórmula de la consigna.</p><strong>F₁ [m]</strong></article>
+      </div>
+
+      <div class="formula-explanation panel">
+        <div>
+          <span class="eyebrow">Fórmula utilizada por el software</span>
+          <div class="formula large"><span>F₁</span><b>=</b><strong>8.656</strong><b>×</b><span class="sqrt">√</span><span class="frac"><i>D [km]</i><i>f [GHz]</i></span></div>
+          <p class="info-long-text">La aplicación toma la distancia total y la frecuencia ingresadas, realiza el cálculo y presenta el resultado en metros.</p>
+        </div>
+        <div class="truncate-box">
+          <span class="eyebrow">Regla de la consigna</span>
+          <h3>Truncar ≠ redondear</h3>
+          <p>El resultado se corta después de la segunda cifra decimal. Por ejemplo: <b>17,6689… → 17,66 m</b>. No se transforma en 17,67 m.</p>
+        </div>
+      </div>
+
+      <section class="info-block">
+        <div class="section-heading compact-heading">
+          <div><span class="eyebrow">07 · Frecuencias</span><h2>Frecuencias utilizadas en enlaces inalámbricos</h2><p>Las diferentes bandas presentan características distintas de alcance, velocidad e interferencias.</p></div>
+        </div>
+        <div class="frequency-grid">
+          <article class="frequency-card"><span>2.4</span><div><h3>2.4 GHz</h3><p>Buen alcance y uso extendido en redes inalámbricas de propósito general.</p></div></article>
+          <article class="frequency-card"><span>5</span><div><h3>5 GHz</h3><p>Mayor velocidad y, en muchos escenarios, menor congestión que 2.4 GHz.</p></div></article>
+          <article class="frequency-card"><span>24/28</span><div><h3>24 / 28 GHz</h3><p>Bandas utilizadas en enlaces de alta capacidad y determinados despliegues 5G.</p></div></article>
+          <article class="frequency-card"><span>60</span><div><h3>60 GHz</h3><p>Permite grandes velocidades, especialmente en enlaces de distancias cortas.</p></div></article>
+        </div>
+      </section>
+
+      <section class="info-block">
+        <div class="section-heading compact-heading">
+          <div><span class="eyebrow">08 · Despeje</span><h2>¿Por qué es importante liberar la Zona de Fresnel?</h2><p>La visualización del simulador utiliza el 60% del radio local como referencia didáctica.</p></div>
+        </div>
+        <div class="split-info">
+          <article class="explanation-card"><div class="big-info-icon">60%</div><div><h3>Despeje recomendado</h3><p>Para un enlace estable se busca mantener libre una parte significativa de la primera zona. En FresnelMG se toma el 60% como referencia visual para clasificar el escenario del obstáculo.</p></div></article>
+          <article class="explanation-card"><div class="big-info-icon">LOS</div><div><h3>Línea de vista</h3><p>Dos antenas pueden verse directamente y aun así sufrir pérdidas si un árbol, edificio, montaña u otro elemento invade la zona alrededor del trayecto.</p></div></article>
+        </div>
+      </section>
+
+      <section class="info-block">
+        <div class="section-heading compact-heading">
+          <div><span class="eyebrow">09 · Factores</span><h2>Problemas frecuentes en un enlace</h2><p>Estos son algunos de los aspectos que conviene revisar al planificar una comunicación inalámbrica.</p></div>
+        </div>
+        <div class="problem-grid">
+          <article class="problem-card"><span>≈</span><h3>Interferencias</h3><p>Otras redes o fuentes de radiofrecuencia pueden afectar el rendimiento del enlace.</p></article>
+          <article class="problem-card"><span>⌖</span><h3>Mala alineación</h3><p>Una orientación incorrecta de las antenas puede disminuir la potencia recibida.</p></article>
+          <article class="problem-card"><span>△</span><h3>Obstáculos</h3><p>Árboles, edificios y otros elementos pueden invadir la línea de vista o la Zona de Fresnel.</p></article>
+          <article class="problem-card"><span>∑</span><h3>Mal cálculo</h3><p>Errores en distancia, frecuencia o alturas pueden afectar la planificación del enlace.</p></article>
+        </div>
+      </section>
+
+      <section class="conclusion-card">
+        <div class="conclusion-mark">✓</div>
+        <div><span class="eyebrow">10 · Conclusión</span><h2>Una zona despejada mejora la confiabilidad del enlace</h2><p>El cálculo de la primera zona de Fresnel permite anticipar si existen condiciones que pueden perjudicar la propagación. FresnelMG combina el cálculo matemático con una representación visual para facilitar el análisis y la presentación del trabajo.</p></div>
+      </section>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <div><span class="eyebrow">11 · Uso del sistema</span><h2>Cómo utilizar FresnelMG</h2><p>Un flujo simple para realizar el cálculo y analizar el escenario.</p></div>
+        <a class="btn btn-primary" href="index.html" style="text-decoration:none;">Abrir calculadora <b>↗</b></a>
+      </div>
+      <div class="info-grid info-grid-four">
+        <article class="info-card"><span class="info-icon">01</span><h3>Ingresar</h3><p>Cargá distancia y frecuencia. El sistema acepta coma o punto decimal.</p><strong>Entrada</strong></article>
+        <article class="info-card"><span class="info-icon">02</span><h3>Validar</h3><p>Se bloquean valores vacíos, negativos, letras y formatos inválidos.</p><strong>Control</strong></article>
+        <article class="info-card"><span class="info-icon">03</span><h3>Calcular</h3><p>Se aplica la fórmula y el resultado se trunca a dos decimales.</p><strong>Procesamiento</strong></article>
+        <article class="info-card"><span class="info-icon">04</span><h3>Simular</h3><p>Modificá obstáculos y alturas para observar el estado del despeje.</p><strong>Visualización</strong></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>
+      <strong>Fresnel<span>MG</span></strong>
+      <p>Calculadora de Zona de Fresnel · Trabajo Práctico Individual - DSW-2026-Redes</p>
+    </div>
+    <div class="footer-author">
+      <span>Desarrollado por</span>
+      <strong>Mateo Gonzalez</strong>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

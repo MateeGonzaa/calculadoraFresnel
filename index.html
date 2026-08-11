@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FresnelMG - herramienta profesional para el cálculo y análisis de la primera zona de Fresnel">
+  <title>FresnelMG | Calculadora de Zona Fresnel</title>
+  <link rel="stylesheet" href="style/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="topbar">
+    <a class="logo" href="index.html" aria-label="FresnelMG inicio">
+      <span class="logo-mark">◌</span>
+      <span>
+        <strong>Fresnel<span>MG</span></strong>
+        <small>RF LINK ANALYZER</small>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="Navegación principal">
+      <a class="active" href="index.html">Calculadora</a>
+      <a class="" href="historial.html">Historial</a>
+      <a class="" href="informacion.html">Información</a>
+    </nav>
+
+    <div class="status-pill"><i></i> Sistema listo</div>
+  </header>
+
+  <main id="inicio">
+    <section class="hero" id="calculadora">
+      <div class="hero-copy">
+        <div class="kicker"><span></span> FresnelMG · DSW-2026-Redes</div>
+        <h1>Calculadora de<br><em>Zona de Fresnel</em></h1>
+        <p>Analizá el radio de la primera zona de Fresnel de un enlace inalámbrico con una herramienta simple, precisa y visual.</p>
+        <div class="hero-meta">
+          <span>● HTML</span>
+          <span>● CSS</span>
+          <span>● JavaScript</span>
+        </div>
+      </div>
+
+      <div class="hero-orbit" aria-hidden="true">
+        <div class="orbit orbit-a"></div>
+        <div class="orbit orbit-b"></div>
+        <div class="orbit orbit-c"></div>
+        <div class="signal-dot"></div>
+        <div class="tower tower-left"><b></b></div>
+        <div class="tower tower-right"><b></b></div>
+      </div>
+    </section>
+    <section class="workspace">
+      <article class="panel calculator-panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">01 · Entrada</span>
+            <h2>Datos del enlace</h2>
+          </div>
+          <span class="chip">F₁ · METROS</span>
+        </div>
+
+        <form id="calcForm" novalidate>
+          <div class="input-grid">
+            <label class="input-field">
+              <span>Distancia entre antenas <b>D</b></span>
+              <div class="input-box">
+                <input id="distance" type="text" inputmode="decimal" autocomplete="off" placeholder="10,5" maxlength="20">
+                <span>km</span>
+              </div>
+              <small class="hint">Acepta coma o punto decimal.</small>
+              <small id="distanceError" class="field-error"></small>
+            </label>
+
+            <label class="input-field">
+              <span>Frecuencia de operación <b>f</b></span>
+              <div class="input-box">
+                <input id="frequency" type="text" inputmode="decimal" autocomplete="off" placeholder="2,4" maxlength="20">
+                <span>GHz</span>
+              </div>
+              <small class="hint">Ej.: 2,4 · 5,8 · 24</small>
+              <small id="frequencyError" class="field-error"></small>
+            </label>
+          </div>
+
+          <div class="quick-values">
+            <span>Valores rápidos:</span>
+            <button type="button" data-distance="10" data-frequency="2.4">10 km / 2.4 GHz</button>
+            <button type="button" data-distance="10" data-frequency="5.8">10 km / 5.8 GHz</button>
+            <button type="button" data-distance="20" data-frequency="2.4">20 km / 2.4 GHz</button>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit"><span>Calcular</span><b>↗</b></button>
+            <button class="btn btn-ghost" type="button" id="clearBtn">Limpiar</button>
+          </div>
+        </form>
+
+        <div class="validation-note">
+          <span>✓</span>
+          <p><strong>Control de entrada activo.</strong> Se bloquean valores vacíos, negativos, letras y formatos decimales inválidos.</p>
+        </div>
+      </article>
+
+      <article class="panel result-panel" id="resultPanel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">02 · Resultado</span>
+            <h2>Radio calculado</h2>
+          </div>
+          <span class="live-dot">LIVE</span>
+        </div>
+
+        <div id="emptyResult" class="empty-result">
+          <div class="radar"><span></span></div>
+          <strong>Esperando cálculo</strong>
+          <p>Ingresá la distancia y la frecuencia para obtener F₁.</p>
+        </div>
+
+        <div id="resultContent" class="result-content hidden">
+          <div class="big-number"><span id="resultValue">00.00</span><small>m</small></div>
+          <div class="result-badge"><span>✓</span> Cálculo válido</div>
+          <div class="calculation-line" id="calculationLine"></div>
+          <div class="result-stats">
+            <div><span>Distancia</span><strong id="statDistance">—</strong></div>
+            <div><span>Frecuencia</span><strong id="statFrequency">—</strong></div>
+            <div><span>Precisión</span><strong>2 dec.</strong></div>
+          </div>
+        </div>
+      </article>
+    </section>
+    <section class="formula-strip">
+      <div class="formula-copy">
+        <span class="eyebrow">03 · Modelo matemático</span>
+        <h2>Primera zona de Fresnel</h2>
+        <p>El cálculo solicitado utiliza distancia total del enlace y frecuencia de operación.</p>
+      </div>
+      <div class="formula">
+        <span>F₁</span><b>=</b><strong>8.656</strong><b>×</b><span class="sqrt">√</span>
+        <span class="frac"><i>D [km]</i><i>f [GHz]</i></span>
+      </div>
+    </section>
+
+    <section class="section" id="simulador">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">04 · Visualización</span>
+          <h2>Simulador de enlace</h2>
+          <p>Mové el obstáculo y modificá las alturas para observar el despeje de forma intuitiva.</p>
+        </div>
+        <div class="legend-inline">
+          <span><i class="dot green"></i> Despeje recomendado</span>
+          <span><i class="dot yellow"></i> Advertencia</span>
+          <span><i class="dot red"></i> Obstruido</span>
+        </div>
+      </div>
+
+      <div class="simulator-grid">
+        <article class="panel simulation-card">
+          <div class="scene-wrap">
+            <svg id="scene" viewBox="0 0 1000 420" role="img" aria-label="Simulación de dos antenas y zona de Fresnel">
+              <defs>
+                <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0" stop-color="#091a31"/>
+                  <stop offset="1" stop-color="#06101e"/>
+                </linearGradient>
+                <linearGradient id="ground" x1="0" x2="1">
+                  <stop offset="0" stop-color="#102d3b"/>
+                  <stop offset="1" stop-color="#173b42"/>
+                </linearGradient>
+                <radialGradient id="zoneFill">
+                  <stop offset="0" stop-color="#48d9ff" stop-opacity=".22"/>
+                  <stop offset=".65" stop-color="#2196f3" stop-opacity=".08"/>
+                  <stop offset="1" stop-color="#2196f3" stop-opacity="0"/>
+                </radialGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="5" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+
+              <rect width="1000" height="420" rx="18" fill="url(#sky)"/>
+              <g opacity=".4">
+                <circle cx="120" cy="75" r="1.5" fill="#fff"/>
+                <circle cx="205" cy="130" r="1" fill="#fff"/>
+                <circle cx="380" cy="58" r="1.5" fill="#fff"/>
+                <circle cx="690" cy="92" r="1.2" fill="#fff"/>
+                <circle cx="845" cy="55" r="1.5" fill="#fff"/>
+                <circle cx="920" cy="145" r="1" fill="#fff"/>
+              </g>
+
+              <path d="M0 315 Q160 260 300 315 T600 315 T1000 315 V420 H0Z" fill="url(#ground)"/>
+              <line x1="55" y1="335" x2="945" y2="335" stroke="#315565" stroke-width="2"/>
+
+              <ellipse id="fresnelZone" cx="500" cy="145" rx="360" ry="72" fill="url(#zoneFill)" stroke="#35d5ff" stroke-width="2.5" stroke-dasharray="9 8" filter="url(#glow)"/>
+              <line id="linkLine" x1="90" y1="145" x2="910" y2="145" stroke="#e9fbff" stroke-opacity=".85" stroke-width="2" stroke-dasharray="5 8"/>
+
+              <g id="leftTower">
+                <line x1="90" y1="335" x2="90" y2="145" stroke="#d9e7ef" stroke-width="7"/>
+                <line x1="67" y1="335" x2="90" y2="145" stroke="#526f80" stroke-width="3"/>
+                <line x1="113" y1="335" x2="90" y2="145" stroke="#526f80" stroke-width="3"/>
+                <line x1="72" y1="295" x2="108" y2="295" stroke="#526f80" stroke-width="3"/>
+                <line x1="77" y1="255" x2="103" y2="255" stroke="#526f80" stroke-width="3"/>
+                <line x1="82" y1="215" x2="98" y2="215" stroke="#526f80" stroke-width="3"/>
+                <circle id="leftHead" cx="90" cy="145" r="10" fill="#35d5ff" filter="url(#glow)"/>
+              </g>
+
+              <g id="rightTower">
+                <line x1="910" y1="335" x2="910" y2="145" stroke="#d9e7ef" stroke-width="7"/>
+                <line x1="887" y1="335" x2="910" y2="145" stroke="#526f80" stroke-width="3"/>
+                <line x1="933" y1="335" x2="910" y2="145" stroke="#526f80" stroke-width="3"/>
+                <line x1="892" y1="295" x2="928" y2="295" stroke="#526f80" stroke-width="3"/>
+                <line x1="897" y1="255" x2="923" y2="255" stroke="#526f80" stroke-width="3"/>
+                <line x1="902" y1="215" x2="918" y2="215" stroke="#526f80" stroke-width="3"/>
+                <circle id="rightHead" cx="910" cy="145" r="10" fill="#35d5ff" filter="url(#glow)"/>
+              </g>
+
+              <g id="obstacleGroup">
+                <rect id="obstacle" x="488" y="305" width="24" height="30" rx="4" fill="#35d5ff"/>
+                <path id="obstacleGlow" d="" fill="none" stroke="#35d5ff" stroke-width="2" opacity=".5"/>
+              </g>
+
+              <g id="sceneLabels" fill="#b8d0df" font-family="Inter, sans-serif">
+                <text x="90" y="370" text-anchor="middle" font-size="13">TX</text>
+                <text x="910" y="370" text-anchor="middle" font-size="13">RX</text>
+                <text id="zoneLabel" x="500" y="55" text-anchor="middle" font-size="15" fill="#7fe8ff">PRIMERA ZONA DE FRESNEL</text>
+                <text id="obstacleLabel" x="500" y="392" text-anchor="middle" font-size="12">Obstáculo</text>
+              </g>
+            </svg>
+          </div>
+
+          <div class="scene-result" id="sceneResult">
+            <div><span class="scene-status-dot"></span><strong>Realizá un cálculo para activar el análisis</strong></div>
+            <p>El simulador es una representación visual orientativa del enlace.</p>
+          </div>
+        </article>
+
+        <aside class="panel controls-card">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Controles</span>
+              <h2>Configuración</h2>
+            </div>
+            <span class="chip">SVG · LIVE</span>
+          </div>
+
+          <div class="control">
+            <div><label for="obstacleHeight">Altura del obstáculo</label><output id="obstacleHeightValue">10 m</output></div>
+            <input id="obstacleHeight" type="range" min="0" max="70" value="10">
+          </div>
+
+          <div class="control">
+            <div><label for="obstaclePosition">Posición del obstáculo</label><output id="obstaclePositionValue">Centro</output></div>
+            <input id="obstaclePosition" type="range" min="5" max="95" value="50">
+          </div>
+
+          <div class="control">
+            <div><label for="txHeight">Altura antena TX</label><output id="txHeightValue">60 m</output></div>
+            <input id="txHeight" type="range" min="30" max="80" value="60">
+          </div>
+
+          <div class="control">
+            <div><label for="rxHeight">Altura antena RX</label><output id="rxHeightValue">60 m</output></div>
+            <input id="rxHeight" type="range" min="30" max="80" value="60">
+          </div>
+
+          <div class="sim-note">
+            <strong>¿Qué se evalúa?</strong>
+            <p>Se considera el despeje local frente al radio de Fresnel en la posición del obstáculo. Como referencia se utiliza un 60% del radio local.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>
+      <strong>Fresnel<span>MG</span></strong>
+      <p>Calculadora de Zona de Fresnel · Trabajo Práctico Individual - DSW-2026-Redes</p>
+    </div>
+    <div class="footer-author">
+      <span>Desarrollado por</span>
+      <strong>Mateo Gonzalez</strong>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FresnelMG - herramienta profesional para el cálculo y análisis de la primera zona de Fresnel">
+  <title>FresnelMG | Historial</title>
+  <link rel="stylesheet" href="style/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="topbar">
+    <a class="logo" href="index.html" aria-label="FresnelMG inicio">
+      <span class="logo-mark">◌</span>
+      <span>
+        <strong>Fresnel<span>MG</span></strong>
+        <small>RF LINK ANALYZER</small>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="Navegación principal">
+      <a class="" href="index.html">Calculadora</a>
+      <a class="active" href="historial.html">Historial</a>
+      <a class="" href="informacion.html">Información</a>
+    </nav>
+
+    <div class="status-pill"><i></i> Sistema listo</div>
+  </header>
+
+  <main>
+    <section class="hero hero-inner">
+      <div class="hero-copy">
+        <div class="kicker"><span></span>FresnelMG · Registro local</div>
+        <h1>Historial de<br><em>cálculos</em></h1>
+        <p>Consultá, buscá y eliminá los resultados guardados en este navegador.</p>
+        <div class="hero-meta">
+          <span>● LocalStorage</span>
+          <span>● Búsqueda</span>
+          <span>● Gestión de registros</span>
+        </div>
+      </div>
+      <div class="hero-orbit" aria-hidden="true">
+        <div class="orbit orbit-a"></div>
+        <div class="orbit orbit-b"></div>
+        <div class="orbit orbit-c"></div>
+        <div class="signal-dot"></div>
+        <div class="tower tower-left"><b></b></div>
+        <div class="tower tower-right"><b></b></div>
+      </div>
+    </section>
+
+    <section class="section" id="historial">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">05 · Registro local</span>
+          <h2>Historial de cálculos</h2>
+          <p>Los últimos cálculos se guardan en este navegador mediante LocalStorage.</p>
+        </div>
+        <button class="btn btn-ghost small" id="clearHistoryBtn">Borrar historial</button>
+      </div>
+
+      <div class="panel history-card">
+        <div class="history-toolbar">
+          <div class="history-count"><strong id="historyCount">0</strong> cálculos guardados</div>
+          <input id="historySearch" type="search" placeholder="Buscar por distancia o frecuencia...">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Fecha</th><th>Distancia</th><th>Frecuencia</th><th>F₁</th><th></th></tr></thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+          <div id="emptyHistory" class="empty-history">Todavía no hay cálculos guardados.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:18px;padding:22px;">
+      <span class="eyebrow">Atajo</span>
+      <h2 style="margin-top:5px;">¿Querés realizar un nuevo cálculo?</h2>
+      <p style="color:var(--muted);font-size:11px;margin-top:6px;">Volvé a la calculadora para ingresar distancia y frecuencia y activar el simulador.</p>
+      <a class="btn btn-primary" href="index.html" style="display:inline-flex;text-decoration:none;margin-top:14px;">Ir a la calculadora <b>↗</b></a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>
+      <strong>Fresnel<span>MG</span></strong>
+      <p>Calculadora de Zona de Fresnel · Trabajo Práctico Individual - DSW-2026-Redes</p>
+    </div>
+    <div class="footer-author">
+      <span>Desarrollado por</span>
+      <strong>Mateo Gonzalez</strong>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
