@@ -95,7 +95,7 @@ function renderHistory() {
   });
 }
 
-// ---------------- CALCULADORA + SIMULADOR ----------------
+
 if (has("calcForm")) {
   const form = $("calcForm");
   const distance = $("distance");
@@ -187,7 +187,7 @@ if (has("calcForm")) {
     showToast("Formulario limpiado.");
   });
 
-  // ---------------- SIMULADOR ----------------
+ 
   const obstacle = $("obstacle");
   const leftHead = $("leftHead");
   const rightHead = $("rightHead");
@@ -291,7 +291,7 @@ if (has("calcForm")) {
   updateSimulation();
 }
 
-// ---------------- HISTORIAL ----------------
+
 if (has("historyBody")) {
   renderHistory();
 
@@ -320,8 +320,6 @@ if (has("historyBody")) {
 }
 
 
-// ================= TRANSICIÓN ENTRE PÁGINAS =================
-// Mantiene la navegación fluida sin modificar la lógica de cálculo.
 document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("page-enter");
 
