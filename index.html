@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="FresnelMG - herramienta profesional para el cálculo y análisis de la primera zona de Fresnel">
-  <title>FresnelMG | Calculadora de Zona Fresnel</title>
-  <link rel="stylesheet" href="style/styles.css">
+  <title>FresnelMG | Calculadora de Zona de Fresnel</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -32,7 +32,7 @@
   <main id="inicio">
     <section class="hero" id="calculadora">
       <div class="hero-copy">
-        <div class="kicker"><span></span> FresnelMG · DSW-2026-Redes</div>
+        <div class="kicker"><span></span> Trabajo práctico · DSW-2026-Redes</div>
         <h1>Calculadora de<br><em>Zona de Fresnel</em></h1>
         <p>Analizá el radio de la primera zona de Fresnel de un enlace inalámbrico con una herramienta simple, precisa y visual.</p>
         <div class="hero-meta">
@@ -225,11 +225,12 @@
                 <text x="90" y="370" text-anchor="middle" font-size="13">TX</text>
                 <text x="910" y="370" text-anchor="middle" font-size="13">RX</text>
                 <text id="zoneLabel" x="500" y="55" text-anchor="middle" font-size="15" fill="#7fe8ff">PRIMERA ZONA DE FRESNEL</text>
-                <text id="obstacleLabel" x="500" y="392" text-anchor="middle" font-size="12">Obstáculo</text>
+                <text id="obstacleLabel" x="500" y="392" text-anchor="middle" font-size="12">Obstáculo / piso</text>
               </g>
             </svg>
           </div>
 
+          <div class="sim-connection-banner"><span>↗</span> El radio F₁ calculado alimenta automáticamente este simulador.</div>
           <div class="scene-result" id="sceneResult">
             <div><span class="scene-status-dot"></span><strong>Realizá un cálculo para activar el análisis</strong></div>
             <p>El simulador es una representación visual orientativa del enlace.</p>
@@ -245,24 +246,45 @@
             <span class="chip">SVG · LIVE</span>
           </div>
 
+          <div class="sim-linked-data">
+            <div class="sim-linked-head">
+              <div>
+                <span class="eyebrow">Datos vinculados</span>
+                <h3>Calculadora → Simulador</h3>
+              </div>
+              <span class="link-status"><i></i> AUTOMÁTICO</span>
+            </div>
+            <p id="simDataSource" class="sim-data-source">Esperando un cálculo de la calculadora</p>
+            <div class="sim-linked-grid">
+              <div><span>Distancia D</span><strong id="simDistance">—</strong></div>
+              <div><span>Frecuencia f</span><strong id="simFrequency">—</strong></div>
+              <div><span>Radio F₁</span><strong id="simRadius">—</strong></div>
+            </div>
+            <div class="sim-applied"><span>●</span><strong id="simAppliedRadius">Sin datos</strong></div>
+            <div class="sim-linked-help">
+              D, f y F₁ se aplican automáticamente a la simulación. Podés seguir configurando manualmente el obstáculo, su posición y las alturas de TX/RX.
+            </div>
+          </div>
+
           <div class="control">
-            <div><label for="obstacleHeight">Altura del obstáculo</label><output id="obstacleHeightValue">10 m</output></div>
+            <div><label for="obstacleHeight">Altura del obstáculo / terreno</label><output id="obstacleHeightValue">10 m</output></div>
             <input id="obstacleHeight" type="range" min="0" max="70" value="10">
+            <small class="hint">0 m = piso/terreno, considerado como obstáculo.</small>
           </div>
 
           <div class="control">
             <div><label for="obstaclePosition">Posición del obstáculo</label><output id="obstaclePositionValue">Centro</output></div>
-            <input id="obstaclePosition" type="range" min="5" max="95" value="50">
+            <input id="obstaclePosition" type="range" min="0" max="95" value="50">
           </div>
 
           <div class="control">
             <div><label for="txHeight">Altura antena TX</label><output id="txHeightValue">60 m</output></div>
-            <input id="txHeight" type="range" min="30" max="80" value="60">
+            <input id="txHeight" type="range" min="0" max="80" value="60">
           </div>
 
           <div class="control">
             <div><label for="rxHeight">Altura antena RX</label><output id="rxHeightValue">60 m</output></div>
-            <input id="rxHeight" type="range" min="30" max="80" value="60">
+            <input id="rxHeight" type="range" min="0" max="80" value="60">
           </div>
 
           <div class="sim-note">

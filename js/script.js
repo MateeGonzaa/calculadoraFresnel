@@ -95,7 +95,7 @@ function renderHistory() {
   });
 }
 
-
+// ---------------- CALCULADORA + SIMULADOR ----------------
 if (has("calcForm")) {
   const form = $("calcForm");
   const distance = $("distance");
@@ -110,6 +110,47 @@ if (has("calcForm")) {
   const statFrequency = $("statFrequency");
 
   let lastCalculation = null;
+
+  // Datos vinculados persistentes: la última medición calculada queda
+  // disponible para el simulador incluso si se recarga la página.
+  function getLinkedCalculation() {
+    try {
+      const data = JSON.parse(localStorage.getItem("fresnelLinkedData") || "null");
+      if (!data || !Number.isFinite(data.distance) || !Number.isFinite(data.frequency) || !Number.isFinite(data.fresnelRadius)) return null;
+      return data;
+    } catch {
+      return null;
+    }
+  }
+
+  function saveLinkedCalculation(data) {
+    localStorage.setItem("fresnelLinkedData", JSON.stringify(data));
+  }
+
+  // Vinculación automática: la calculadora alimenta al simulador.
+  function syncCalculatorWithSimulator(d, f, fresnelRadius) {
+    const linked = { distance: d, frequency: f, fresnelRadius };
+    lastCalculation = linked;
+    saveLinkedCalculation(linked);
+
+    const simDistance = $("simDistance");
+    const simFrequency = $("simFrequency");
+    const simRadius = $("simRadius");
+    const simSource = $("simDataSource");
+    const simZone = $("simAppliedRadius");
+
+    if (simDistance) simDistance.textContent = `${formatNumber(d)} km`;
+    if (simFrequency) simFrequency.textContent = `${formatNumber(f)} GHz`;
+    if (simRadius) simRadius.textContent = `${formatNumber(fresnelRadius)} m`;
+    if (simZone) simZone.textContent = `${formatNumber(fresnelRadius)} m aplicados`;
+
+    if (simSource) {
+      simSource.textContent = "✓ Radio y parámetros aplicados automáticamente al simulador";
+      simSource.classList.add("linked");
+    }
+
+    updateSimulation();
+  }
 
   function displayResult(d, f, raw, truncated) {
     emptyResult.classList.add("hidden");
@@ -130,9 +171,8 @@ if (has("calcForm")) {
   function performCalculation(d, f) {
     const raw = calculateFresnel(d, f);
     const truncated = truncateTwo(raw);
-    lastCalculation = { distance: d, frequency: f, result: truncated };
-
     displayResult(d, f, raw, truncated);
+    syncCalculatorWithSimulator(d, f, truncated);
     updateSimulation();
 
     saveHistory({
@@ -183,11 +223,28 @@ if (has("calcForm")) {
     resultContent.classList.add("hidden");
     emptyResult.classList.remove("hidden");
     lastCalculation = null;
+    localStorage.removeItem("fresnelLinkedData");
+
+    const simDistance = $("simDistance");
+    const simFrequency = $("simFrequency");
+    const simRadius = $("simRadius");
+    const simSource = $("simDataSource");
+
+    if (simDistance) simDistance.textContent = "—";
+    if (simFrequency) simFrequency.textContent = "—";
+    if (simRadius) simRadius.textContent = "—";
+    const simZone = $("simAppliedRadius");
+    if (simZone) simZone.textContent = "Sin datos";
+    if (simSource) {
+      simSource.textContent = "Esperando un cálculo de la calculadora";
+      simSource.classList.remove("linked");
+    }
+
     updateSimulation();
     showToast("Formulario limpiado.");
   });
 
- 
+  // ---------------- SIMULADOR ----------------
   const obstacle = $("obstacle");
   const leftHead = $("leftHead");
   const rightHead = $("rightHead");
@@ -205,11 +262,13 @@ if (has("calcForm")) {
     return "Centro";
   }
 
-  function localFresnelRadius(d, f, percent) {
-    const d1 = d * (percent / 100);
-    const d2 = d - d1;
-    if (d1 <= 0 || d2 <= 0) return 0;
-    return 17.32 * Math.sqrt((d1 * d2) / (f * (d1 + d2)));
+  function localFresnelRadius(f1Radius, percent) {
+    // El F₁ calculado por la fórmula de la consigna es el radio máximo,
+    // ubicado en el punto medio del enlace. Para cualquier otra posición,
+    // obtenemos el radio local proporcional a ese F₁.
+    const p = percent / 100;
+    if (!f1Radius || p <= 0 || p >= 1) return 0;
+    return f1Radius * 2 * Math.sqrt(p * (1 - p));
   }
 
   function updateSimulation() {
@@ -227,7 +286,8 @@ if (has("calcForm")) {
 
     const d = lastCalculation?.distance;
     const f = lastCalculation?.frequency;
-    const radius = d && f ? localFresnelRadius(d, f, pos) : 0;
+    const f1Radius = lastCalculation?.fresnelRadius;
+    const radius = f1Radius ? localFresnelRadius(f1Radius, pos) : 0;
 
     leftHead.setAttribute("cy", leftY);
     rightHead.setAttribute("cy", rightY);
@@ -243,33 +303,45 @@ if (has("calcForm")) {
     fresnelZone.setAttribute("rx", rx);
     fresnelZone.setAttribute("ry", ry);
 
-    const obstaclePx = obsH * 2.35;
+    // El piso siempre se considera un obstáculo.
+    // Si el usuario selecciona 0 m, no significa “sin obstáculo”:
+    // significa que el obstáculo coincide con el nivel del terreno.
+    const terrainObstacleHeight = Math.max(0, obsH);
+    const obstaclePx = Math.max(2, terrainObstacleHeight * 2.35);
     obstacle.setAttribute("x", x - 12);
     obstacle.setAttribute("y", SIM.groundY - obstaclePx);
     obstacle.setAttribute("height", obstaclePx);
+    obstacle.setAttribute("fill", obsH === 0 ? "#4d7180" : "#35d5ff");
 
     const localRadius = radius;
     const requiredClearance = localRadius * .60;
     const linkHeightMeters = txH + (rxH - txH) * (pos / 100);
-    const clearance = linkHeightMeters - obsH;
-    const ratio = localRadius > 0 ? clearance / requiredClearance : 1;
+    // La altura efectiva del obstáculo nunca puede ser menor que el piso (0 m).
+    const clearance = linkHeightMeters - terrainObstacleHeight;
+    const ratio = requiredClearance > 0 ? clearance / requiredClearance : 1;
 
     let status = "Realizá un cálculo para activar el análisis";
     let detail = "El simulador es una representación visual orientativa del enlace.";
     let dot = "#617b8d";
 
     if (d && f) {
-      if (ratio >= 1) {
+      // 0 m representa el piso/terreno. Por indicación del profesor,
+      // el piso se considera un obstáculo y SIEMPRE debe figurar como obstruido.
+      if (obsH === 0) {
+        status = "Obstruido";
+        detail = `Piso / terreno a 0 m · Referencia 60%: ${requiredClearance.toFixed(2)} m`;
+        dot = "#ff657c";
+      } else if (ratio >= 1) {
         status = "Despeje recomendado";
-        detail = `Despeje: ${clearance.toFixed(2)} m · Referencia 60%: ${requiredClearance.toFixed(2)} m`;
+        detail = `Piso/obstáculo: ${terrainObstacleHeight.toFixed(2)} m · Despeje: ${clearance.toFixed(2)} m · Referencia 60%: ${requiredClearance.toFixed(2)} m`;
         dot = "#37e6a1";
       } else if (ratio >= .65) {
         status = "Advertencia: despeje parcial";
-        detail = `Despeje: ${clearance.toFixed(2)} m · Referencia 60%: ${requiredClearance.toFixed(2)} m`;
+        detail = `Piso/obstáculo: ${terrainObstacleHeight.toFixed(2)} m · Despeje: ${clearance.toFixed(2)} m · Referencia 60%: ${requiredClearance.toFixed(2)} m`;
         dot = "#f5c451";
       } else {
         status = "Obstruido";
-        detail = `Despeje: ${clearance.toFixed(2)} m · Referencia 60%: ${requiredClearance.toFixed(2)} m`;
+        detail = `Piso/obstáculo: ${terrainObstacleHeight.toFixed(2)} m · Despeje: ${clearance.toFixed(2)} m · Referencia 60%: ${requiredClearance.toFixed(2)} m`;
         dot = "#ff657c";
       }
     }
@@ -288,10 +360,17 @@ if (has("calcForm")) {
     });
   });
 
+  // Restaurar automáticamente el último cálculo al abrir/recargar la página.
+  const storedLinked = getLinkedCalculation();
+  if (storedLinked) {
+    lastCalculation = storedLinked;
+    syncCalculatorWithSimulator(storedLinked.distance, storedLinked.frequency, storedLinked.fresnelRadius);
+  }
+
   updateSimulation();
 }
 
-
+// ---------------- HISTORIAL ----------------
 if (has("historyBody")) {
   renderHistory();
 
@@ -320,6 +399,8 @@ if (has("historyBody")) {
 }
 
 
+// ================= TRANSICIÓN ENTRE PÁGINAS =================
+// Mantiene la navegación fluida sin modificar la lógica de cálculo.
 document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("page-enter");
 
