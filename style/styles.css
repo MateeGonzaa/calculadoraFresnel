@@ -35,9 +35,7 @@ main{width:min(1180px,calc(100% - 32px));margin:auto}
 @media(max-width:900px){.nav a{padding:8px}.status-pill{display:none}.hero{grid-template-columns:1fr}.hero-orbit{height:240px}.workspace,.simulator-grid{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr 1fr}.formula-strip{align-items:flex-start;flex-direction:column}.formula{align-self:center}}
 @media(max-width:620px){.topbar{width:calc(100% - 18px);height:auto;min-height:62px;flex-wrap:wrap;padding:10px 12px;gap:8px;top:8px}.logo{min-width:auto}.nav{order:3;width:100%;overflow:auto;justify-content:flex-start}.nav a{font-size:10px;white-space:nowrap}.hero{padding:50px 8px 35px;min-height:0}.hero-orbit{display:none}h1{font-size:47px}.workspace,.input-grid,.info-grid{grid-template-columns:1fr}.calculator-panel,.result-panel{padding:19px}.section{padding-top:55px}.section-heading{align-items:flex-start;flex-direction:column}.legend-inline{display:none}.history-toolbar{align-items:stretch;flex-direction:column}.history-toolbar input{width:100%}.formula-explanation{grid-template-columns:1fr}.truncate-box{padding-left:0;padding-top:18px;border-left:0;border-top:1px solid var(--line)}.formula.large{font-size:22px}.footer{flex-direction:column}.footer-author{text-align:left}.formula-strip{padding:20px}.formula{font-size:20px}.form-actions{flex-direction:column}.btn{width:100%}}
 
-/* =========================================================
-   ANIMACIONES PRO — FresnelMG
-   ========================================================= */
+/* ANIMACIONES */
 
 @keyframes ambientFloatOne {
   0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: .08; }
@@ -184,7 +182,7 @@ body { animation: pageFade .55s ease both; }
 }
 
 
-/* ================= NAVBAR + TRANSICIÓN ENTRE PÁGINAS ================= */
+/* NAVBAR y TRANSICIÓN ENTRE PÁGINAS */
 @keyframes navEnter {
   from { opacity:0; transform:translateY(-7px); }
   to { opacity:1; transform:translateY(0); }
@@ -205,7 +203,7 @@ body.page-exit { animation:pageExit .22s ease forwards; pointer-events:none; }
 }
 
 
-/* ================= INFORMACIÓN AMPLIADA ================= */
+/* INFORMACIÓN AMPLIADA  */
 .info-grid-four{grid-template-columns:repeat(4,1fr)}
 .info-feature{grid-column:span 2}
 .info-long-text{color:#71899a;font-size:10px;line-height:1.7;margin-top:16px;max-width:620px}
