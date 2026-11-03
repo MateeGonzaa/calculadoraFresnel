@@ -1,4 +1,4 @@
-c/* ==========================================================================
+/* ==========================================================================
    FresnelMG — Calculadora de Zona de Fresnel
    F1 [m] = 8.656 × √( D [km] / f [GHz] )   →   truncado a 2 decimales
    ========================================================================== */
@@ -326,6 +326,50 @@ if (has("calcForm")) {
     minRatio: 0.40      // por debajo del 40 % se considera obstruido
   };
 
+  // Compatibilidad: si el index.html es una versión anterior (elipse fija, torres estáticas),
+  // se crean acá los elementos que el simulador necesita.
+  (function ensureSimulatorElements() {
+    const svg = $("scene");
+    if (!svg) return;
+
+    let zone = $("fresnelZone");
+    if (!zone || zone.tagName.toLowerCase() !== "path") {
+      const path = document.createElementNS(SVG_NS, "path");
+      path.id = "fresnelZone";
+      path.setAttribute("fill", "url(#zoneFill)");
+      path.setAttribute("stroke", "#35d5ff");
+      path.setAttribute("stroke-width", "2.5");
+      path.setAttribute("stroke-dasharray", "9 8");
+      path.setAttribute("filter", "url(#glow)");
+      if (zone) zone.replaceWith(path); else $("linkLine").before(path);
+      zone = path;
+    }
+    if (!$("fresnelCore")) {
+      const core = document.createElementNS(SVG_NS, "path");
+      core.id = "fresnelCore";
+      core.setAttribute("fill", "rgba(55,230,161,.07)");
+      core.setAttribute("stroke", "#37e6a1");
+      core.setAttribute("stroke-width", "1.4");
+      core.setAttribute("stroke-dasharray", "3 6");
+      zone.after(core);
+    }
+
+    [["leftTower", "leftMast", "leftHead"], ["rightTower", "rightMast", "rightHead"]].forEach(([tower, mast, head]) => {
+      const group = $(tower);
+      if (!group || $(mast)) return;
+      const headEl = $(head);
+      group.querySelectorAll("line").forEach((l) => l.remove());
+      const g = document.createElementNS(SVG_NS, "g");
+      g.id = mast;
+      group.insertBefore(g, headEl);
+    });
+
+    ["obstaclePosition"].forEach((id) => {
+      const el = $(id);
+      if (el) { el.min = "2"; el.max = "98"; }
+    });
+  })();
+
   const obstacle = $("obstacle");
   const leftHead = $("leftHead");
   const rightHead = $("rightHead");
@@ -433,7 +477,7 @@ if (has("calcForm")) {
     fresnelCore.setAttribute("d", lensPath(leftY, rightY, drawRadius, SIM.okRatio));
     fresnelZone.style.opacity = hasData ? 1 : 0.35;
     fresnelCore.style.opacity = hasData ? 1 : 0.35;
-    zoneLabel.textContent = hasData ? `PRIMERA ZONA DE FRESNEL · F₁ = ${formatNumber(f1Radius)} m` : "PRIMERA ZONA DE FRESNEL";
+    if (zoneLabel) zoneLabel.textContent = hasData ? `PRIMERA ZONA DE FRESNEL · F₁ = ${formatNumber(f1Radius)} m` : "PRIMERA ZONA DE FRESNEL";
 
     // Obstáculo (0 m = piso/terreno)
     const obstaclePx = Math.max(2, obsH * SIM.pxPerMeter);
