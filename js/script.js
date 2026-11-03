@@ -218,7 +218,7 @@ if (has("calcForm")) {
     resultContent.classList.remove("hidden");
     resultValue.textContent = formatNumber(truncated);
     calculationLine.textContent =
-      `F₁ = 8.656 × √(${formatInput(d)} / ${formatInput(f)}) = ${raw.toFixed(8)}… m`;
+      `F₁ = 8.656 × √(${formatInput(d)} / ${formatInput(f)}) = ${raw.toFixed(8).replace(".", ",")}… m`;
     statDistance.textContent = `${formatInput(d)} km`;
     statFrequency.textContent = `${formatInput(f)} GHz`;
     $("resultPanel").animate(
@@ -497,13 +497,13 @@ if (has("calcForm")) {
     let detail = "El simulador es una representación visual orientativa del enlace.";
 
     if (hasData) {
-      const info = `Radio local: ${localRadius.toFixed(2)} m · Línea del enlace: ${linkHeightMeters.toFixed(2)} m · Despeje: ${clearance.toFixed(2)} m · Zona libre: ${freePct.toFixed(0)} % (recomendado ≥ 60 %)`;
+      const info = `Radio local: ${formatNumber(localRadius)} m · Línea del enlace: ${formatNumber(linkHeightMeters)} m · Despeje: ${formatNumber(clearance)} m · Zona libre: ${freePct.toFixed(0)} % (recomendado ≥ 60 %)`;
 
       // Por indicación del profesor, el piso (0 m) es un obstáculo y siempre figura como obstruido.
       if (obsH === 0) {
         state = "bad";
         status = "Obstruido";
-        detail = `Piso / terreno a 0 m · Referencia 60 %: ${(localRadius * SIM.okRatio).toFixed(2)} m`;
+        detail = `Piso / terreno a 0 m · Referencia 60 %: ${formatNumber(localRadius * SIM.okRatio)} m`;
       } else if (clearance <= 0) {
         state = "bad";
         status = "Obstruido: el obstáculo corta la línea de vista";
