@@ -256,3 +256,9 @@ body.page-exit { animation:pageExit .22s ease forwards; pointer-events:none; }
 .freq-table tbody tr{cursor:pointer;transition:background .15s}
 .freq-table tbody tr:hover,.freq-table tbody tr:focus-visible{background:rgba(53,213,255,.06);outline:0}
 .simulation-card{align-self:start}
+
+/* Casilla numérica de las alturas del simulador */
+.sim-num{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line2);background:#061321;border-radius:8px;padding:0 8px;height:28px}
+.sim-num:focus-within{border-color:var(--cyan)}
+.sim-num input{width:54px;border:0;outline:0;background:transparent;color:var(--cyan);font-weight:800;font-size:12px;text-align:right}
+.sim-num span{color:#678194;font-size:10px;font-weight:800}

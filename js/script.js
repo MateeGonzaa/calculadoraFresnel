@@ -210,6 +210,7 @@ if (has("calcForm")) {
     simSource.textContent = "✓ Radio y parámetros aplicados automáticamente al simulador";
     simSource.classList.add("linked");
 
+    if (window.refreshPositionBox) window.refreshPositionBox();
     updateSimulation();
   }
 
@@ -310,12 +311,15 @@ if (has("calcForm")) {
     simSource.textContent = "Esperando un cálculo de la calculadora";
     simSource.classList.remove("linked");
 
+    if (window.refreshPositionBox) window.refreshPositionBox();
     updateSimulation();
     showToast("Formulario limpiado.");
   });
 
   /* ------------------------------ SIMULADOR ------------------------------ */
   const SVG_NS = "http://www.w3.org/2000/svg";
+  const fmtCtl = new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 });
+  const fmtKm = new Intl.NumberFormat("es-AR", { maximumFractionDigits: 3 });
   const SIM = {
     groundY: 335,
     leftX: 90,
@@ -368,6 +372,21 @@ if (has("calcForm")) {
       const el = $(id);
       if (el) { el.min = "2"; el.max = "98"; }
     });
+
+    // Rótulos numéricos dentro del gráfico (con coma decimal).
+    const mk = (attrs) => {
+      const tag = attrs.tag; delete attrs.tag;
+      const el = document.createElementNS(SVG_NS, tag);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      svg.appendChild(el);
+    };
+    const txt = { tag: "text", "text-anchor": "middle", "font-size": "13", "font-family": "Inter, sans-serif", "font-weight": "700" };
+    mk({ tag: "line", id: "radiusBar", stroke: "#7fe8ff", "stroke-width": "2", "stroke-dasharray": "3 3", opacity: "0" });
+    mk({ ...txt, id: "txValueLabel", fill: "#e9fbff" });
+    mk({ ...txt, id: "rxValueLabel", fill: "#e9fbff" });
+    mk({ ...txt, id: "obsValueLabel", fill: "#e9fbff" });
+    mk({ ...txt, id: "radiusValueLabel", fill: "#7fe8ff", "text-anchor": "start" });
+    mk({ ...txt, id: "distValueLabel", fill: "#7fe8ff", x: "500", y: "372" });
   })();
 
   const obstacle = $("obstacle");
@@ -450,6 +469,14 @@ if (has("calcForm")) {
     const obsH = sliderValue("obstacleHeight");
     const pos = sliderValue("obstaclePosition");
     const p = pos / 100;
+
+    // La posición del obstáculo se expresa en km reales cuando hay un cálculo (conexión con la calculadora).
+    const posOut = $("obstaclePositionValue");
+    if (posOut) {
+      posOut.textContent = lastCalculation
+        ? `${formatInput(Math.round(lastCalculation.distance * p * 100) / 100)} km de TX · ${positionLabel(pos)}`
+        : positionLabel(pos);
+    }
 
     const leftY = SIM.groundY - txH * SIM.pxPerMeter;
     const rightY = SIM.groundY - rxH * SIM.pxPerMeter;
@@ -538,16 +565,149 @@ if (has("calcForm")) {
     const para = document.createElement("p");
     para.textContent = detail;
     sceneResult.append(head, para);
+
+    // Números dentro del gráfico
+    const place = (id, px, py, text) => {
+      const el = $(id);
+      if (!el) return;
+      el.setAttribute("x", px);
+      el.setAttribute("y", Math.max(14, py));
+      el.textContent = text;
+    };
+    place("txValueLabel", SIM.leftX, leftY - 18, `${fmtCtl.format(txH)} m`);
+    place("rxValueLabel", SIM.rightX, rightY - 18, `${fmtCtl.format(rxH)} m`);
+    place("obsValueLabel", x, SIM.groundY - obstaclePx - 8, obsH === 0 ? "0 m (piso)" : `${fmtCtl.format(obsH)} m`);
+    place("distValueLabel", 500, 372, hasData ? `D = ${formatInput(d)} km` : "");
+
+    const bar = $("radiusBar");
+    if (bar) {
+      if (hasData && localRadius > 0) {
+        const linkY = leftY + (rightY - leftY) * p;
+        const rPx = Math.min(SIM.maxZonePx, localRadius * SIM.pxPerMeter);
+        bar.setAttribute("x1", x); bar.setAttribute("x2", x);
+        bar.setAttribute("y1", linkY - rPx); bar.setAttribute("y2", linkY);
+        bar.setAttribute("opacity", "1");
+        place("radiusValueLabel", x + 8, linkY - rPx + 4, `r = ${formatNumber(localRadius)} m`);
+      } else {
+        bar.setAttribute("opacity", "0");
+        place("radiusValueLabel", 0, 0, "");
+      }
+    }
   }
 
-  ["obstacleHeight", "obstaclePosition", "txHeight", "rxHeight"].forEach((id) => {
-    const input = $(id);
+  /* Controles con decimales: cada altura tiene slider (paso 0,1) + casilla numérica que acepta coma. */
+  const fmtHeight = new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 });
+
+  function clampToRange(range, value) {
+    return Math.min(Number(range.max), Math.max(Number(range.min), value));
+  }
+
+  ["obstacleHeight", "txHeight", "rxHeight"].forEach((id) => {
+    const range = $(id);
     const output = $(id + "Value");
-    input.addEventListener("input", () => {
-      output.textContent = id === "obstaclePosition" ? positionLabel(Number(input.value)) : `${input.value} m`;
+    if (!range || !output) return;
+    range.step = "0.1";
+
+    const box = document.createElement("div");
+    box.className = "sim-num";
+    const num = document.createElement("input");
+    num.type = "text";
+    num.inputMode = "decimal";
+    num.autocomplete = "off";
+    num.maxLength = 6;
+    num.setAttribute("aria-label", $(id).closest(".control").querySelector("label").textContent + " (metros)");
+    const unit = document.createElement("span");
+    unit.textContent = "m";
+    box.append(num, unit);
+    output.replaceWith(box);
+
+    const showFromRange = () => { num.value = fmtHeight.format(Number(range.value)); };
+    showFromRange();
+
+    range.addEventListener("input", () => { showFromRange(); updateSimulation(); });
+
+    num.addEventListener("input", () => {
+      const clean = sanitizeLive(num.value);
+      if (clean !== num.value) num.value = clean;
+      const value = parsePositiveDecimal(clean) ?? (/^0*[.,]?0*$/.test(clean) && clean !== "" ? 0 : null);
+      if (value === null) return;
+      range.value = clampToRange(range, value);
       updateSimulation();
     });
+    num.addEventListener("blur", () => {
+      const value = parsePositiveDecimal(num.value) ?? (num.value && /^0*[.,]?0*$/.test(num.value) ? 0 : Number(range.value));
+      range.value = clampToRange(range, value);
+      showFromRange();
+      updateSimulation();
+    });
+    num.addEventListener("keydown", (e) => { if (e.key === "Enter") num.blur(); });
   });
+
+  // Posición del obstáculo: se escribe en km desde TX cuando hay un cálculo (usa la D de la
+  // calculadora) y en % del enlace cuando todavía no hay cálculo.
+  const posRange = $("obstaclePosition");
+  let posNum = null, posUnit = null, posHint = null;
+  if (posRange) {
+    posRange.step = "any";
+    posRange.min = "2";
+    posRange.max = "98";
+
+    const output = $("obstaclePositionValue");
+    const box = document.createElement("div");
+    box.className = "sim-num";
+    posNum = document.createElement("input");
+    posNum.type = "text";
+    posNum.inputMode = "decimal";
+    posNum.autocomplete = "off";
+    posNum.maxLength = 8;
+    posNum.setAttribute("aria-label", "Posición del obstáculo");
+    posUnit = document.createElement("span");
+    box.append(posNum, posUnit);
+    if (output) output.replaceWith(box); else posRange.before(box);
+
+    posHint = document.createElement("small");
+    posHint.className = "hint";
+    posRange.after(posHint);
+
+    const describe = () => {
+      const pct = Number(posRange.value);
+      posHint.textContent = lastCalculation
+        ? `${positionLabel(pct)} · a ${fmtKm.format((pct / 100) * lastCalculation.distance)} km de TX y ${fmtKm.format((1 - pct / 100) * lastCalculation.distance)} km de RX`
+        : `${positionLabel(pct)} · calculá D y f para ver la posición en km`;
+    };
+
+    window.refreshPositionBox = () => {
+      const pct = Number(posRange.value);
+      if (lastCalculation) {
+        posUnit.textContent = "km";
+        posNum.value = fmtKm.format((pct / 100) * lastCalculation.distance);
+      } else {
+        posUnit.textContent = "%";
+        posNum.value = fmtCtl.format(pct);
+      }
+      describe();
+    };
+
+    posRange.addEventListener("input", () => {
+      posRange.value = Math.round(Number(posRange.value) * 10) / 10;
+      window.refreshPositionBox();
+      updateSimulation();
+    });
+    posNum.addEventListener("input", () => {
+      const clean = sanitizeLive(posNum.value);
+      if (clean !== posNum.value) posNum.value = clean;
+      const n = normalizeInput(clean);
+      if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(n)) return;
+      const v = Number(n);
+      const pct = lastCalculation ? (v / lastCalculation.distance) * 100 : v;
+      posRange.value = Math.max(2, Math.min(98, pct));
+      describe();
+      updateSimulation();
+    });
+    posNum.addEventListener("blur", () => window.refreshPositionBox());
+    posNum.addEventListener("keydown", (e) => { if (e.key === "Enter") posNum.blur(); });
+    window.refreshPositionBox();
+  }
 
   // Restaurar el último cálculo al abrir/recargar la página.
   const storedLinked = getLinkedCalculation();
