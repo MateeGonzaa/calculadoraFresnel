@@ -246,3 +246,13 @@ body.page-exit { animation:pageExit .22s ease forwards; pointer-events:none; }
 .sim-applied{display:flex;align-items:center;gap:7px;margin-top:10px;padding:8px 10px;border-radius:9px;border:1px solid rgba(55,230,161,.16);background:rgba(55,230,161,.035);color:#7fe8ff;font-size:9px;transition:all .3s ease}
 .sim-applied span{color:#37e6a1;text-shadow:0 0 8px rgba(55,230,161,.8);animation:pulse 1.6s ease-in-out infinite}
 .sim-applied strong{font-weight:700}
+
+/* Tabla de frecuencias */
+.freq-card{padding:8px 6px;overflow-x:auto}
+.freq-table{width:100%;border-collapse:collapse;font-size:12px}
+.freq-table th{color:#557184;font-size:9px;text-transform:uppercase;letter-spacing:.12em;text-align:left;padding:12px 16px}
+.freq-table td{padding:11px 16px;color:#c6d9e4;border-top:1px solid var(--line)}
+.freq-table td:first-child{color:var(--cyan);font-weight:800;white-space:nowrap}
+.freq-table tbody tr{cursor:pointer;transition:background .15s}
+.freq-table tbody tr:hover,.freq-table tbody tr:focus-visible{background:rgba(53,213,255,.06);outline:0}
+.simulation-card{align-self:start}

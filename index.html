@@ -192,27 +192,17 @@
 
               <path d="M0 315 Q160 260 300 315 T600 315 T1000 315 V420 H0Z" fill="url(#ground)"/>
               <line x1="55" y1="335" x2="945" y2="335" stroke="#315565" stroke-width="2"/>
-
-              <ellipse id="fresnelZone" cx="500" cy="145" rx="360" ry="72" fill="url(#zoneFill)" stroke="#35d5ff" stroke-width="2.5" stroke-dasharray="9 8" filter="url(#glow)"/>
-              <line id="linkLine" x1="90" y1="145" x2="910" y2="145" stroke="#e9fbff" stroke-opacity=".85" stroke-width="2" stroke-dasharray="5 8"/>
+              <path id="fresnelZone" d="" fill="url(#zoneFill)" stroke="#35d5ff" stroke-width="2.5" stroke-dasharray="9 8" filter="url(#glow)"/>
+              <path id="fresnelCore" d="" fill="rgba(55,230,161,.07)" stroke="#37e6a1" stroke-width="1.4" stroke-dasharray="3 6"/>
+<line id="linkLine" x1="90" y1="145" x2="910" y2="145" stroke="#e9fbff" stroke-opacity=".85" stroke-width="2" stroke-dasharray="5 8"/>
 
               <g id="leftTower">
-                <line x1="90" y1="335" x2="90" y2="145" stroke="#d9e7ef" stroke-width="7"/>
-                <line x1="67" y1="335" x2="90" y2="145" stroke="#526f80" stroke-width="3"/>
-                <line x1="113" y1="335" x2="90" y2="145" stroke="#526f80" stroke-width="3"/>
-                <line x1="72" y1="295" x2="108" y2="295" stroke="#526f80" stroke-width="3"/>
-                <line x1="77" y1="255" x2="103" y2="255" stroke="#526f80" stroke-width="3"/>
-                <line x1="82" y1="215" x2="98" y2="215" stroke="#526f80" stroke-width="3"/>
+                <g id="leftMast"></g>
                 <circle id="leftHead" cx="90" cy="145" r="10" fill="#35d5ff" filter="url(#glow)"/>
               </g>
 
               <g id="rightTower">
-                <line x1="910" y1="335" x2="910" y2="145" stroke="#d9e7ef" stroke-width="7"/>
-                <line x1="887" y1="335" x2="910" y2="145" stroke="#526f80" stroke-width="3"/>
-                <line x1="933" y1="335" x2="910" y2="145" stroke="#526f80" stroke-width="3"/>
-                <line x1="892" y1="295" x2="928" y2="295" stroke="#526f80" stroke-width="3"/>
-                <line x1="897" y1="255" x2="923" y2="255" stroke="#526f80" stroke-width="3"/>
-                <line x1="902" y1="215" x2="918" y2="215" stroke="#526f80" stroke-width="3"/>
+                <g id="rightMast"></g>
                 <circle id="rightHead" cx="910" cy="145" r="10" fill="#35d5ff" filter="url(#glow)"/>
               </g>
 
@@ -274,7 +264,7 @@
 
           <div class="control">
             <div><label for="obstaclePosition">Posición del obstáculo</label><output id="obstaclePositionValue">Centro</output></div>
-            <input id="obstaclePosition" type="range" min="0" max="95" value="50">
+            <input id="obstaclePosition" type="range" min="2" max="98" value="50">
           </div>
 
           <div class="control">
@@ -289,9 +279,35 @@
 
           <div class="sim-note">
             <strong>¿Qué se evalúa?</strong>
-            <p>Se considera el despeje local frente al radio de Fresnel en la posición del obstáculo. Como referencia se utiliza un 60% del radio local.</p>
+            <p>Se considera el despeje local frente al radio de Fresnel en la posición del obstáculo. Como referencia se utiliza un 60% del radio local (la línea verde punteada dentro de la zona marca ese 60%).</p>
           </div>
         </aside>
+      </div>
+    </section>
+    <section class="section" id="frecuencias">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">05 · Referencia</span>
+          <h2>Frecuencias más utilizadas</h2>
+          <p>Tocá una fila para cargar esa frecuencia en la calculadora.</p>
+        </div>
+      </div>
+      <div class="panel freq-card">
+        <table class="freq-table">
+          <thead><tr><th>Frecuencia (GHz)</th><th>Aplicación principal</th></tr></thead>
+          <tbody>
+            <tr data-freq="0.9" tabindex="0"><td>0.9</td><td>GSM antiguo, RFID, radioaficionados</td></tr>
+            <tr data-freq="1.8" tabindex="0"><td>1.8</td><td>GSM (2G), algunas bandas de 4G</td></tr>
+            <tr data-freq="2.4" tabindex="0"><td>2.4</td><td>Wi-Fi (802.11 b/g/n)</td></tr>
+            <tr data-freq="3.5" tabindex="0"><td>3.5</td><td>5G, WiMAX</td></tr>
+            <tr data-freq="5" tabindex="0"><td>5.0</td><td>Wi-Fi (802.11 a/n/ac/ax)</td></tr>
+            <tr data-freq="5.8" tabindex="0"><td>5.8</td><td>Enlaces inalámbricos punto a punto</td></tr>
+            <tr data-freq="6" tabindex="0"><td>6</td><td>Wi-Fi 6E</td></tr>
+            <tr data-freq="24" tabindex="0"><td>24</td><td>5G mmWave</td></tr>
+            <tr data-freq="28" tabindex="0"><td>28</td><td>Microondas y 5G</td></tr>
+            <tr data-freq="60" tabindex="0"><td>60</td><td>WiGig (802.11ad)</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
   </main>
